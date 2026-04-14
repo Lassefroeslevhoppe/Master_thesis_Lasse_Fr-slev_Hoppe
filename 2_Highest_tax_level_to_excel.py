@@ -4,18 +4,18 @@ import gzip
 import pandas as pd
 from pathlib import Path
 
-# ----------------------------------------------------------
+###############################################
 # Directories
-# ----------------------------------------------------------
+###############################################
 
 LCA_DIRS = {"SS": "//maps/projects/prohaska/people/vpt968/Data_analysis_revised_data/Results_of_three_data_types/Updated_mapping/lca_files_with_age/_metadmg_SS",
     "DS": "/maps/projects/prohaska/people/vpt968/Data_analysis_revised_data/Results_of_three_data_types/Updated_mapping/lca_files_with_age/metadmg_DS"
 }
 OUTPUT_EXCEL = "all_phyla_genus_summary.xlsx"
 
-# ----------------------------------------------------------
+###############################################
 # Here I define the different ranks found in the taxa_path 
-# ----------------------------------------------------------
+###############################################
 
 TAXON_RANKS = [
     "species", "genus", "family", "order", "class", "subclass",
@@ -23,11 +23,11 @@ TAXON_RANKS = [
     "cohort", "infraclass", "phylum", "kingdom", "domain"
 ]
 
-# ----------------------------------------------------------
+###############################################
 # Here I define a function to clean the taxa_path, because as it is now, there are a lot of ""s
 # and they make it really difficult to cleanly extract the ranks. Also trailing whitespaces and
 # anything with no value is handled. 
-# ----------------------------------------------------------
+###############################################
 
 
 def clean_taxpath(taxa_path):
@@ -40,13 +40,13 @@ def clean_taxpath(taxa_path):
         clean_string = clean_string.replace('""', '"')
     return clean_string
 
-# ----------------------------------------------------------
+###############################################
 # Next is a function to parse the taxa_path - in other words to split the taxa_path string (s)
 # into segments (seg) containing the taxonomic level and the name of it. There were some issues 
 # with the ""'s again, so I remove them once more. The two "mached" parts were quite the hussle. But
 # I noticed that some of the taxa were not passed to the resulting excel. And that was because some of 
 # the taxa taxonomic levels in the taxa path did not have ""'s. So the second part is to handle them.
-# ----------------------------------------------------------
+###############################################
 
 def parse_taxapath(taxa_path):
     s = clean_taxpath(taxa_path)
@@ -70,10 +70,10 @@ def parse_taxapath(taxa_path):
 
     return taxa
 
-# ----------------------------------------------------------
+###############################################
 # Now I define a function to extract the ranks from the taxa_path string that I parsed above
 # Into out, I now extract the higest possible rank and the name for that. 
-# ----------------------------------------------------------
+###############################################
 
 def extract_taxonomy_all_ranks(taxa_path):
     raw = parse_taxapath(taxa_path)
@@ -94,9 +94,9 @@ def extract_taxonomy_all_ranks(taxa_path):
 
     return out
 
-# ----------------------------------------------------------
+###############################################
 # Here is a function to extract the file names from the LCA files. 
-# ----------------------------------------------------------
+###############################################
 
 SAMPLE_ID_REGEX = re.compile(r"(CGG-1-\d+)")
 
@@ -104,13 +104,13 @@ def extract_sample_id(filename):
     m = SAMPLE_ID_REGEX.search(filename)
     return m.group(1) if m else None
 
-# ----------------------------------------------------------
+###############################################
 # Now I load all the LCA-files. This is done for all files ending with lca.gz. All lines in all files
 # are read and taxa_path and the age of the samples are extracted. all lines without "phyla" in it are discarded.
 # All Suidae and Homo sapiens reads are removed, because i am certain that they are contaminations. They took up a LOT
 # of space in the LCA-files when I inspected them manually. Lastly, the the information is stored in a list and return
 # it as a pandas dataframe.  
-# ----------------------------------------------------------
+###############################################
 
 def load_all_lca_records():
     records = []
@@ -162,7 +162,7 @@ def load_all_lca_records():
 
     return pd.DataFrame(records)
 
-# ----------------------------------------------------------
+###############################################
 # Now I deine a function to build the excel sheet. I define that the each phylum gets
 # its own sheet. I get the phyla and build the excel sheets after their names. 
 # Next, I create a subdataframe (sub) to contain the reads belonging to the respecive phyla. 
@@ -175,7 +175,7 @@ def load_all_lca_records():
 # SS libraries, bu DS libraries or both. I then append all the taxonomic levels along with the stuff above for the specific 
 # unique entries  I should just have done that to begin with, because I later figured out that species level
 # was a no-go in aeDNA.  
-# ----------------------------------------------------------
+###############################################
 
 def build_phylum_genus_excel(df, output_excel):
 
@@ -239,9 +239,9 @@ def build_phylum_genus_excel(df, output_excel):
     writer.save()
 
 
-# ----------------------------------------------------------
+###############################################
 # Here I define the main to run the functions above and create the excel sheet. 
-# ----------------------------------------------------------
+###############################################
 
 def main():
     df = load_all_lca_records()
