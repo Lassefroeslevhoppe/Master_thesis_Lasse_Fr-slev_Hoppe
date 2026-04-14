@@ -1,10 +1,10 @@
-Pipeline for my analysis of data from core M0058A
+**Pipeline for my analysis of data from core M0058A**
 
 Author: Lasse Frøslev Hoppe
 
 Affiliation: Master students, Section for GeoGenetics, Globe Institute, University of Copenhagen
 ___________________________________________________________________________________________________
-Overview
+**Overview**
 
 This study analysed 20 samples from sediment core m0058A collected at the IODP exp. 325.
 The scripts provided here show how I edited, extracted and analysed the data from LCA-files.
@@ -14,7 +14,8 @@ The processing of fastq-files was conducted through a pipeline created by the Ce
 Filtering and editing of the LCA files are provided in scripts 1-4 in the depository here on GitHub. 
 Data analysis is provided in scripts 5-11 and all scripts are numerized to show the order of which they are supposed to run.
 ____________________________________________________________________________________________________
-Requirements
+**Requirements**
+
 Python v 3.7.10
 
 AdapterRemoval v 2.3.3
@@ -39,13 +40,13 @@ statsmodels v 0.12.2
 
 scikit-learn v 1.6.1 
 ___________________________________________________________________________________________________
-Environment for running STARS (time series analysis)
+**Environment for running STARS (time series analysis)**
 
 Because I was not allowed to install any packages on the server Dandycomp, I created an environment to allow me to install the R_shift package. I chose to make a conda-environment as I was showed how by one of the people I was sharing a workspace with when I first started 
 learning about coding: "conda create STARS_env". To this environment, I loaded Pandas, Nympy, subprocess, os and tempfile. This was done to handle the r-script that I included in the scripts for detecting Regime Shifts. 
 Most inportantly for this script to run, the R_shift package must be installed in the envrionenment.  
 ___________________________________________________________________________________________________
-Pipeline (the scripts must be run in order)
+**Pipeline (the scripts must be run in order)**
 
 1_Appending_depth_and_age-py --> Adding columns with information of the sample age and the position where the sample was collected from the core. 
 
@@ -71,11 +72,11 @@ Pipeline (the scripts must be run in order)
 
 12_Time_sereies_analysis_marine_genera.py --> Same as above but only for the set of marine genera. 
 ____________________________________________________________________________________________________________________________
-Additional files
+**Additional files**
 
 In the repository, I have also included the output excel files (such as the n_reads of fastq files). Also, the whitelists for all genera passing damage QC and the marine genera are provided as excel files.  
 ____________________________________________________________________________________________________________________________
-Final remarks
+**Final remarks**
 
 The scripts here are provided for my supervisor, co-supervisor and examiner/censor to show how I processed and analysed the data in my master thesis. This is meant as a supplement and 
 and not as a stand-alone part of the project. For a more detailed description see the Master Thesis' methodology section. 
