@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 from typing import Optional
 
 
-# =========================================
+###############################################
 # Directories
-# =========================================
+###############################################
 
 SS_DIR = "/maps/projects/prohaska/people/vpt968/Data_analysis_revised_data/Results_of_three_data_types/Updated_mapping/lca_files_with_age/_metadmg_SS"
 DS_DIR = "/maps/projects/prohaska/people/vpt968/Data_analysis_revised_data/Results_of_three_data_types/Updated_mapping/lca_files_with_age/metadmg_DS"
@@ -16,33 +16,33 @@ WHITELIST = "/maps/projects/prohaska/people/vpt968/Data_analysis_revised_data/Ge
 OUTDIR = "/maps/projects/prohaska/people/vpt968/Scripts_for_GitHub/Results/Passing_QC"
 os.makedirs(OUTDIR, exist_ok=True)
 
-# =========================================
+###############################################
 # This it the first filter applied. The other ones come from the LIB_and_ENC_DIR and the WHITELIST, and
 # I have defined it here because it makes it easier to change the min reads limit later. This value is for 
 # reads of a speficic genus across all samples. 
-# =========================================
+###############################################
 
 MIN_READS_TOTAL = 50
 
-# =========================================
+###############################################
 # Here I read the LCA-files and pass them to the pd.DataFrame. This is basically the same function
 # as from the Structure_finalized script except that I pass it to the pd.DataFrame 
-# =========================================
+###############################################
 
 def read_lca_file(lca_files: str) -> pd.DataFrame:
     return pd.read_csv(lca_files, sep="\t", compression="gzip" if lca_files.endswith(".gz") else None, dtype=str, comment="#")
 
-# =========================================
+###############################################
 # Here I reuse the normalization function. 
 # I strip the names for aný trailing whitespaces and tabs and make it all lowercase.
-# =========================================
+###############################################
 
 def normalization_of_names(species_name):
     if pd.isna(species_name):
         return None
     return " ".join(str(species_name).strip().split()).lower()
 
-# =========================================
+###############################################
 # This function is also reused from the Structure_finalized script:
 # Now it's time to get the species extracted from the taxa_path. The species are the highest 
 # taxonomix level possibel for the taxa_string, so if present they will always be first. Therefore
@@ -51,7 +51,7 @@ def normalization_of_names(species_name):
 # split it there. Further, each taxonomic level is split (":") and only the center part [1] is used
 # as that is the organisms' name at the taxonomic level (species, genus etc.) that cal be called out
 # when using this function later in the script. 
-# =========================================
+###############################################
 
 def extract_rank(taxa_path, rank):
     if pd.isna(taxa_path):
@@ -61,10 +61,10 @@ def extract_rank(taxa_path, rank):
             return entry.split(":")[1].strip('"')
     return None
 
-# =========================================
+###############################################
 # Here I load the WHITELIST excel sheet and normalize the names by stripping them of blank spaces
 # and colons. The column names are cleaned as well 
-# =========================================
+###############################################
 
 def load_genus_whitelist(excel_path: str) -> set:
     df = pd.read_excel(excel_path)
@@ -72,9 +72,9 @@ def load_genus_whitelist(excel_path: str) -> set:
     return set(df["Genus"].dropna().map(normalization_of_names))
 
 
-# =========================================
+###############################################
 # Here I define a function to load the LCA-files and pass them to pandas dataframe. 
-# =========================================
+###############################################
 
 def load_samples(LCA_files: str, data_type: str) -> pd.DataFrame:
     rows = []
@@ -99,12 +99,12 @@ def load_samples(LCA_files: str, data_type: str) -> pd.DataFrame:
         }))
     return pd.concat(rows, ignore_index=True)
 
-# =========================================
+###############################################
 # Here I define a function to load the genera from the controls (ENC and LIB-files) and put in an
 # empty set. All ENC and LibPTC files are examined and all the sample lca files are skipped. I extract
 # all the occurences of "genus" and use the extract rank function from above. That way I get a
 # nice and cleaned set that I can use to remove from the LCA-files later.   
-# =========================================
+###############################################
 
 def load_control_genera(LIB_and_ENC_files: str) -> set:
     present = set()
@@ -122,10 +122,10 @@ def load_control_genera(LIB_and_ENC_files: str) -> set:
     return present
 
 
-# ------------------------------
+###############################################
 # Here I load the SS and DS LCA files, and merge the two dataframes ss and ds. The genera from the
 # ENCs and LIBs are loaded as well as the whitelist genera.  
-# ------------------------------
+###############################################
 ss = load_samples(SS_DIR, "SS")
 ds = load_samples(DS_DIR, "DS")
 samples = pd.concat([ss, ds], ignore_index=True)
@@ -133,7 +133,7 @@ samples = pd.concat([ss, ds], ignore_index=True)
 CONTROL_GENERA = load_control_genera(LIB_and_ENC_DIR)
 WHITELIST = load_genus_whitelist(WHITELIST)
 
-# ------------------------------
+###############################################
 # The fist line here group samples by type (SS or DS) and age and finds all the unique 
 # normalized genus names per age and type and count them. 
 # Next the genus_totals counts how many rows each genus appeas in because I then filter away all
@@ -141,7 +141,7 @@ WHITELIST = load_genus_whitelist(WHITELIST)
 # the number of remaining unique genera per age and datatype is counted. Lastly with the merged
 # I create a table with all four steps: before filtering, 50 n_reads, controls removed and whitelist
 # aka Passing damage QC   
-# ------------------------------
+###############################################
 before_filtering = samples.groupby(["type", "age"])["genus_norm"].nunique().reset_index(name="Before filtering")
 
 genus_totals = samples.groupby(["type", "genus_norm"]).size().reset_index(name="total_rows")
@@ -166,9 +166,9 @@ step_cols = ["Before filtering", "≥50 reads", "Controls removed", "Passing dam
 for c in step_cols:
     merged[c] = merged[c].astype(int)
 
-# ------------------------------
+###############################################
 # Here I create an excel file with the genera remaining after the different QC steps.  
-# ------------------------------
+###############################################
 qc_out = merged.copy()
 qc_out["Removed at ≥50 reads"] = qc_out["Before filtering"] - qc_out["≥50 reads"]
 qc_out["Removed at Controls removed"] = qc_out["≥50 reads"] - qc_out["Controls removed"]
@@ -202,9 +202,8 @@ excel_out = os.path.join(OUTDIR, "SS_DS_genus_QC_removed_per_step.xlsx")
 with pd.ExcelWriter(excel_out, engine="openpyxl") as xw:
     qc_out.to_excel(xw, sheet_name="Removed_per_age", index=False)
     summary.to_excel(xw, sheet_name="Totals_by_type", index=False)
-print("✅ QC removal Excel written:", excel_out)
 
-# ------------------------------
+###############################################
 # Here I plot the figure. I get alle the ages for the Y axis and reverse them so that the oldest
 # at the top of the plot. I define the colours and how the bars should look. Next I create the
 # figure in which the subplots go into: one row, two columns and make them share the y-axis. 
@@ -213,7 +212,7 @@ print("✅ QC removal Excel written:", excel_out)
 # the same order is sequred and any occurence of zeroes or N/A gets a 0. I define the positioning on
 # the y-axis by arranging all ages. Now the bars representing the different QC-steps are defined
 # and they are drawn to the plots. Then titles, labels and legends are included.          
-# ------------------------------
+###############################################
 all_ages = sorted(merged["age"].unique(), reverse=True)
 
 colors = ["#bbb6b6", "#6f8fba", "#366c92", "#042639"]
