@@ -4,9 +4,9 @@ import pandas as pd
 import re
 import matplotlib.pyplot as plt
 
-# =========================
+###############################################
 # Directories 
-# =========================
+###############################################
 
 metadmg_ss_dir = "/maps/projects/prohaska/people/vpt968/Data_analysis_revised_data/Results_of_three_data_types/Updated_mapping/lca_files_with_age/_metadmg_SS"
 metadmg_ds_dir = "/maps/projects/prohaska/people/vpt968/Data_analysis_revised_data/Results_of_three_data_types/Updated_mapping/lca_files_with_age/metadmg_DS"
@@ -19,9 +19,9 @@ fastq_xlsx = "/maps/projects/prohaska/people/vpt968/Scripts_for_GitHub/fastq_rea
 output_dir = "/maps/projects/prohaska/people/vpt968/Data_analysis_revised_data/Results"
 os.makedirs(output_dir, exist_ok=True)
 
-# =========================
+###############################################
 # Superkingdoms and the colors they have in the final plot.
-# =========================
+###############################################
 CATEGORIES = ["Bacteria", "Archaea", "Eukaryota", "Viruses", "unclassified", "misclassified"]
 
 COLORS = {
@@ -33,29 +33,29 @@ COLORS = {
     "misclassified": "#bcbd22",
 }
 
-# =========================
+###############################################
 # Here I load the FASTQ counts from the fastq_read_counts.xlsx and extract the sample ID's, Data type
 # (either SS or DS libraries) and the number of reads after bioinformatics QC. In my excel file, there are
 # both R1 and R2 values, so I specifiy that any duplicates should be dropped, as I otherwise overestimate 
 # the number of DNA-strings in the FASTQ files. The R1 and R2 are there simply because the strings have been 
 # run in both directions - these are used in mapping, but usually either R1 or R2 return a taxon. Lastly the 
 # data type is stripped of trailing spaces and renamed to "group"
-# =========================
+###############################################
 
 fastq_df = pd.read_excel(fastq_xlsx)
 fastq_df = fastq_df[["sample_id", "Data_type", "n_reads_after_QC"]].drop_duplicates()
 fastq_df["group"] = fastq_df["Data_type"].str.strip()
 
-# =========================
+###############################################
 # First I define a function to open the zipped lca-files. 
-# =========================
+###############################################
 
 def open_lca_file(path):
     return gzip.open(path, "rt") if path.endswith(".gz") else open(path, "r")
 
-# =========================
+###############################################
 # Next I define a function to extract the age from each file - located in the column with "Age (ka)"
-# =========================
+###############################################
 
 def find_age_column(columns):
     for col in columns:
@@ -63,13 +63,13 @@ def find_age_column(columns):
             return col
     return None
 
-# =========================
+###############################################
 # Here I define a function to extract the superkingdom/domain from the taxa_path string. Depending 
 # on the LCA file (either prefilter or metadmg), the superkingdom is either called "superkingdom" 
 # or "domain". Also, the LCA files containing prokaryote deads, have a prefix in front of the domain
 # abd tgus is removed. So bascically, I first look for superkingdom, but if that is not present, I
 # use domain instead. It is not present for the eukaryote LCA files. 
-# =========================
+###############################################
 
 def get_superkingdom(taxa_path):
     raw = None
@@ -90,10 +90,10 @@ def get_superkingdom(taxa_path):
 
     return raw
 
-# =========================
+###############################################
 # So here I defne a function to deal with entries in the prefilter LCA-files that have no 
 # domain are returned as unclassified and any eukaryotes are returned as misclassified.
-# =========================
+###############################################
 
 def classify_prefilter(raw):
     if raw is None:
@@ -104,11 +104,11 @@ def classify_prefilter(raw):
         return raw
     return "unclassified"
 
-# =========================
+###############################################
 # And here for the eukaryote LCA-files (metadmg), I classify all eukaryotes as what they are. If there is no data
 # for superkingdom in the files, I return unclassified and if there is a superkingdom, but it is not Eukaryota, I 
 # return misclassified. 
-# =========================
+###############################################
 
 def classify_metadmg(raw):
     if raw is None:
@@ -117,19 +117,19 @@ def classify_metadmg(raw):
         return "Eukaryota"
     return "misclassified"
 
-# =========================
+###############################################
 # Now, I define a function to extract the file names from the LCA files - so that I can match them to the 
 # fastq-reads
-# =========================
+###############################################
 
 def extract_sample_id(filename):
     m = re.search(r"(CGG-[0-9]-[0-9]{6})", filename)
     return m.group(1) if m else None
 
-# =========================
+###############################################
 # Here I defiene a function to load the lca files (with the renamed data_type as group) and extract age, 
 # superkingdom/domain as well as the sample ID. I do so by using the functions defined above. 
-# =========================
+###############################################
 
 def load_lca_dir(input_dir, group, prefiler_or_metadmg):
 
@@ -167,11 +167,11 @@ def load_lca_dir(input_dir, group, prefiler_or_metadmg):
 
     return pd.concat(records, ignore_index=True)
 
-# =========================
+###############################################
 # Now I define a function to turn the data into pivot tables for plotting. The data is divided
 # into SS and DS libraries (data type/group) and grouped by age and superkingdom and any values  
 # with no values gets a "0"
-# =========================
+###############################################
 
 def make_normalized_pivots(df_all, pct_col):
     df = df_all.copy()
@@ -185,11 +185,11 @@ def make_normalized_pivots(df_all, pct_col):
     ds = ds[CATEGORIES].reindex(ages, fill_value=0.0)
     return ss, ds, ages
 
-# =========================
+###############################################
 # Now I define a function for plotting, first by creating the figure with room for two subplots (SS and DS)
 # Nect, I simply define the labels, sizes and structure of how I wish the plot to look, making sure that 
 # font size is always size 16, so that it is easy to read. Also, I add a legend.+
-# =========================
+###############################################
 
 def plot_two_panel(ss_pivot, ds_pivot, ages, title_suffix, filename, x_label):
     fig, (ax1, ax2) = plt.subplots(1, 2, sharey=True, figsize=(14, 8))
@@ -229,10 +229,10 @@ def plot_two_panel(ss_pivot, ds_pivot, ages, title_suffix, filename, x_label):
     plt.savefig(os.path.join(output_dir, filename), dpi=300)
     plt.close(fig)
 
-# =========================
+###############################################
 # Finally I get to wrap all the functions above into the main where i load all the datasets, merge with fastq reads
 # and normalize the number of lca reads with the number of fastq reads and generate the final figure. 
-# =========================
+###############################################
 
 if __name__ == "__main__":
 
