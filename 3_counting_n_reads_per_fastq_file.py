@@ -3,19 +3,17 @@ import glob
 import os
 import pandas as pd
 
-# --------------------------------------------------
+###############################################
 # Directives
-# --------------------------------------------------
+###############################################
 
 FASTQ_DIR = "/maps/projects/prohaska/people/vpt968/Data_analysis_revised_data/Original_files/Fastq"
 
-FASTQ_ENDING = ["*.fastq.gz"]
-
-# --------------------------------------------------
+###############################################
 # Each fastq file has four lines per. Therefore, the function for counting reads must divide the number of rows with 4
 # Therefore, the function for counting reads must divide the number of rows with 4.
 # the += adds the count of one line to the following, starting at 0, adding 1 to the value of line_count.
-# --------------------------------------------------
+###############################################
 
 def count_reads_fastq(file_path):
     line_count = 0
@@ -44,7 +42,7 @@ def extract_sample_id(filename):
 
 def main():
     fastq_files = []
-    for ext in FASTQ_ENDING:
+    for ext in *.fastq.gz:
         fastq_files.extend(glob.glob(os.path.join(FASTQ_DIR, "**", ext), recursive=True))
 
     if not fastq_files:
