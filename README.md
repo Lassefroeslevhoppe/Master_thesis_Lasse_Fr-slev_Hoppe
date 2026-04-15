@@ -14,6 +14,15 @@ The processing of fastq-files was conducted through a pipeline created by the Ce
 Filtering and editing of the LCA files are provided in scripts 1-4 in the depository here on GitHub. 
 Data analysis is provided in scripts 5-11 and all scripts are numerized to show the order of which they are supposed to run.
 ____________________________________________________________________________________________________
+**Research questions: **
+
+(1)	Evaluate the quality of aeDNA recovered from coral reef sediments at the Great barrier Reef spanning the last ~18,000 years,
+
+(2)	Use the recovered aeDNA to reconstruct the taxonomic composition of the Great Barrier Reef communities through time,
+
+(3)	Attempt to detect and describe significant shifts in taxonomic composition of the Great Barrier Reef communities.
+
+____________________________________________________________________________________________________
 **Requirements**
 
 Python v 3.7.10
@@ -58,7 +67,7 @@ ________________________________________________________________________________
 
 5_Passing_QC_finalized.py --> This script plots the number of genera passing the multistep quality control I set up
 
-6_Panel_plots.py --> This script is used by running it in python and typing in the genus to create panel plots for: eg. "6_panel_plots.py Porites". These plots were used to authenticate the genera reads as truely ancient. 
+6_Panel_plots.py --> This script is used by running it in python and typing in the genus to create panel plots for: eg. "6_panel_plots.py Porites". These plots were used to authenticate and evaluate the quality of aeDNA recovered from the core. 
 
 7_Heatmap_all_genera.py --> This script gathered all the reads for genera in the whitelist (excel file created manually), applied a CLR data transformation and plotted the genera present for each sample.
 
